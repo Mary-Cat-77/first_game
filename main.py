@@ -1,46 +1,52 @@
 import pygame
+import random
 pygame.init()
 class Ball:
-    def __init__ (self, poss, colour):
+    def __init__ (self, poss, colour, radius):
         self.poss = poss  # (100, 100)
         self.colour = colour
-        pygame.draw.circle(screen, self.colour, self.poss, 50)
+        self.dir = True
+        self.radius = radius
+        pygame.draw.circle(screen, self.colour, self.poss, self.radius)
 
     def move(self):
-        self.poss = (self.poss[0] + 1, self.poss[1])
+        if self.poss[0] + self.radius == 1000:
+            self.dir = False
+        elif self.poss[0] == self.radius:
+            self.dir = True
+        if self.dir:
+            self.poss = self.poss[0] + 1, self.poss[1]
+        else:
+            self.poss = self.poss[0] - 1, self.poss[1]
+        self.poss = (self.poss[0], self.poss[1])
 
     def renew(self):
-        pygame.draw.circle(screen, self.colour, self.poss, 50)
+        pygame.draw.circle(screen, self.colour, self.poss, self.radius)
 
 
-screen = pygame.display.set_mode((600, 300))
+balls = []
+screen = pygame.display.set_mode((1000, 800))
 clock = pygame.time.Clock()
-n = (242, 138, 188)
-first_ball = Ball((100, 100), n)
-FPS = 100
-x, y = 100, 100
-flag = True
+n = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+FPS = random.randint(50, 100)
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.MOUSEBUTTONDOWN:
-            n = (245, 14, 126)
-            pygame.draw.circle(screen, n, (x, y), 50)
+            if event.button == 1:
+                n = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+                balls.append(Ball(event.pos, n, random.randint(1, 60)))
+            elif event.button == 3:
+                if len(balls) > 0:
+                    n = (245, 14, 126)
+                    pygame.draw.circle(screen, n, balls[0].poss, balls[0].radius)
+                    del balls[0]
     screen.fill((245, 14, 126))
-    first_ball.move()
-    pygame.draw.circle(screen, n, (x, y), 50)
+    for i in range(len(balls)):
+        balls[i].move()
+        balls[i].renew()
     pygame.display.flip()
-
-    if x + 50 == 600:
-        flag = False
-    elif x == 50 :
-        flag = True
-    if flag:
-        x += 1
-    else:
-        x -= 1
-    pygame.draw.circle(screen, (0, 0, 0), (x, y), 50)
     clock.tick(FPS)
 pygame.quit()
