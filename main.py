@@ -23,6 +23,12 @@ class Ball:
     def renew(self):
         pygame.draw.circle(screen, self.colour, self.poss, self.radius)
 
+    def ball_intersaction(self, other):
+        if ((self.poss[0] - other.poss[0]) ** 2) + ((self.poss[1] - other.poss[1]) ** 2) <= (self.radius + other.radius) ** 2:
+            return True
+        else:
+            return False
+
 
 balls = []
 screen = pygame.display.set_mode((1000, 800))
@@ -47,6 +53,18 @@ while running:
     for i in range(len(balls)):
         balls[i].move()
         balls[i].renew()
+    i = 0
+    while i < len(balls):
+        j = i + 1
+        while j < len(balls):
+            if balls[i].ball_intersaction(balls[j]):
+                balls.pop(j)
+                balls.pop(i)
+                break
+            else:
+                j += 1
+        i += 1
+
     pygame.display.flip()
     clock.tick(FPS)
 pygame.quit()
