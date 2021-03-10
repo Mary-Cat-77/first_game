@@ -5,19 +5,19 @@ class Ball:
     def __init__ (self, poss, colour, radius):
         self.poss = poss  # (100, 100)
         self.colour = colour
-        self.dir = True
+        self.dir = list(random.choices(range(-4, 5), k=2))
         self.radius = radius
         pygame.draw.circle(screen, self.colour, self.poss, self.radius)
 
     def move(self):
         if self.poss[0] + self.radius == 1000:
-            self.dir = False
+            self.dir[0] *= -1
         elif self.poss[0] == self.radius:
-            self.dir = True
+            self.dir[1] *= -1
         if self.dir:
-            self.poss = self.poss[0] + 1, self.poss[1]
+            self.poss = self.poss[0] - self.dir[0], self.poss[1]
         else:
-            self.poss = self.poss[0] - 1, self.poss[1]
+            self.poss = self.poss[0] + self.dir[1], self.poss[1]
         self.poss = (self.poss[0], self.poss[1])
 
     def renew(self):
